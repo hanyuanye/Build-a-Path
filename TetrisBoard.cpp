@@ -98,16 +98,10 @@ std::vector<std::vector<int>> TetrisBoard::get_board()
 void TetrisBoard::generate_mino()
 {
 	if (board[TETRIS_MINO_INITX + 2][TETRIS_MINO_INITY + 2] != 0) {
-		cout << "good" << endl;
 		return;
 	}
 	int piece = rand() % 7;
 	mino = new Mino(piece);
-}
-
-bool TetrisBoard::mino_locked()
-{
-	return false;
 }
 
 bool TetrisBoard::mino_valid()

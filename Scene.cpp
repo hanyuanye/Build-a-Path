@@ -41,7 +41,9 @@ bool Scene::init(const char * title, int x, int y, int width, int height, bool f
 	ticks_last_down_move = 0;
 	ticks_last_move = 0;
 	ticks_last_rotate = 0;
-	Tetris = new TetrisBoard(30, 30, renderer);
+	Tetris = std::make_unique<TetrisBoard>(30, 30, renderer);
+	travel_mode = std::make_unique<Travel>(renderer);
+	travel_mode->createPlayer(29, 29, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_HITBOX_WIDTH, PLAYER_HITBOX_HEIGHT);
 	return true;
 }
 
@@ -57,7 +59,7 @@ void Scene::recieve_input()
 			tetris_input(event);
 			break;
 		case travel:
-
+			travel_input(event);
 			break;
 		default:
 			break;
@@ -80,8 +82,12 @@ void Scene::update()
 		}
 		break;
 	case transistion:
+		hitbox_manager = std::make_unique<HitboxManager>(Tetris->get_board());
+		mode = travel;
 		break;
 	case travel:
+		travel_mode->handleInput(pmove);
+		travel_mode->update();
 		break;
 	default:
 		break;
@@ -99,6 +105,7 @@ void Scene::render()
 	case transistion:
 		break;
 	case travel:
+		travel_mode->render();
 		break;
 	default:
 		break;
@@ -110,7 +117,6 @@ void Scene::clean()
 {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
-	delete Tetris;
 }
 
 void Scene::update_ticks()
@@ -154,6 +160,31 @@ void Scene::tetris_input(SDL_Event event)
 		break;
 	case SDL_KEYUP:
 		tmove = none;
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene::travel_input(SDL_Event event)
+{
+	switch (event.type) {
+	case SDL_KEYDOWN:
+		switch (event.key.keysym.sym) {
+		case SDLK_LEFT:
+			pmove = left_player;
+			break;
+		case SDLK_RIGHT:
+			pmove = right_player;
+			break;
+		case SDLK_UP:
+			pmove = up_player;
+			break;
+		default:
+			break;
+		}
+	case SDL_KEYUP:
+		pmove = none_player;
 		break;
 	default:
 		break;

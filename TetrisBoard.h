@@ -1,3 +1,10 @@
+//This class defines all the logic for the build state.
+//It updates based on a move and renders accordingly. 
+//A lot of helper functions were necessary. 
+//
+//It also currently has a sort of magic number system that will be replaced.
+
+
 #pragma once
 #include <vector>
 #include <SDL.h>
@@ -8,8 +15,6 @@
 
 enum Mode { build, travel, transistion };
 enum TetrisMove { none, rLeft, rRight, mLeft, mRight, mDown, autoDown };
-enum PlayerMove { left, right, up };
-enum colorName { white, blue, red, green };
 
 extern int xInitial;
 extern int yInitial;
@@ -44,7 +49,6 @@ private:
 	void render_board();
 	void render_tile(color tile_color, int x, int y);
 	void generate_mino();
-	bool mino_locked();
 	bool mino_valid();
 	void clear_mino();
 	void place_mino();
