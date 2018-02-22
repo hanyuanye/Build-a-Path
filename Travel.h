@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "HitboxManager.h"
+#include "TetrisBoard.h"
 #include "Player.h"
 
 enum PlayerMove { none_player, left_player, right_player, up_player };
@@ -21,11 +22,11 @@ public:
 
 	void handleInput(PlayerMove pmove);
 	void update();
-	void render();
+	void render(std::unique_ptr<TetrisBoard>& Tetris);
 	void createPlayer(const int& boardWidth, const int& boardHeight, const int& playerWidth, const int& playerHeight, const int& hitboxWidth, const int& hitboxHeight);
+	std::shared_ptr<Player> player;
 
 private: 
-	std::shared_ptr<Player> player;
 	SDL_Renderer * ren;
 };
 

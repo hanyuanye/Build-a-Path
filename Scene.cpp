@@ -1,7 +1,5 @@
 #include "Scene.h"
 
-
-
 Scene::Scene()
 {
 
@@ -41,9 +39,9 @@ bool Scene::init(const char * title, int x, int y, int width, int height, bool f
 	ticks_last_down_move = 0;
 	ticks_last_move = 0;
 	ticks_last_rotate = 0;
-	Tetris = std::make_unique<TetrisBoard>(30, 30, renderer);
+	Tetris = std::make_unique<TetrisBoard>(10, 30, renderer);
 	travel_mode = std::make_unique<Travel>(renderer);
-	travel_mode->createPlayer(29, 29, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_HITBOX_WIDTH, PLAYER_HITBOX_HEIGHT);
+	travel_mode->createPlayer(5, 2, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_HITBOX_WIDTH, PLAYER_HITBOX_HEIGHT);
 	return true;
 }
 
@@ -69,10 +67,9 @@ void Scene::recieve_input()
 
 void Scene::update()
 {
-	update_ticks();
 	switch (mode) {
 	case build:
-		if ((tmove == rRight || tmove == rLeft) && ticks_last_rotate >= ticks_rotate) {
+		if ((tmove == rRight || tmove == rLeft || tmove == drop) && ticks_last_rotate >= ticks_rotate) {
 			ticks_last_rotate = 0;
 			Tetris->update(tmove);
 		}
@@ -80,13 +77,19 @@ void Scene::update()
 			ticks_last_move = 0;
 			Tetris->update(tmove);
 		}
+		update_ticks();
 		break;
 	case transistion:
 		hitbox_manager = std::make_unique<HitboxManager>(Tetris->get_board());
+		Tetris->update(clear);
 		mode = travel;
+		pmove = none_player;
+		travel_mode->handleInput(pmove);
+		travel_mode->update();
 		break;
 	case travel:
 		travel_mode->handleInput(pmove);
+		hitbox_manager->checkCollisions(travel_mode->player);
 		travel_mode->update();
 		break;
 	default:
@@ -105,7 +108,7 @@ void Scene::render()
 	case transistion:
 		break;
 	case travel:
-		travel_mode->render();
+		travel_mode->render(Tetris);
 		break;
 	default:
 		break;
@@ -154,6 +157,9 @@ void Scene::tetris_input(SDL_Event event)
 		case SDLK_DOWN:
 			tmove = mDown;
 			break;
+		case SDLK_SPACE:
+			tmove = drop;
+			break;
 		default:
 			break;
 		}
@@ -183,6 +189,7 @@ void Scene::travel_input(SDL_Event event)
 		default:
 			break;
 		}
+		break;
 	case SDL_KEYUP:
 		pmove = none_player;
 		break;

@@ -10,9 +10,9 @@ TetrisBoard::TetrisBoard(int height, int width, SDL_Renderer * _ren)
 {
 	srand(time(NULL));
 	ren = _ren;
-	board.resize(height+1);
+	board.resize(height);
 	for (auto &i : board) {
-		i.resize(width+1, 0);
+		i.resize(width, 0);
 	}
 	for (unsigned i = 0; i < board.size(); i++) {
 		board[i][0]= -1;
@@ -78,6 +78,15 @@ void TetrisBoard::update(TetrisMove move)
 			mino->y--;
 			replace_mino();
 		}
+		break;
+	case drop:
+		drop_mino();
+		replace_mino();
+		break;
+	case clear:
+		clear_mino();
+		delete mino;
+		return;
 		break;
 	default:
 		break;
@@ -149,6 +158,14 @@ void TetrisBoard::replace_mino()
 	set_mino();
 	delete mino;
 	generate_mino();
+}
+
+void TetrisBoard::drop_mino()
+{
+	while (mino_valid()) {
+		mino->y++;
+	}
+	mino->y--;
 }
 
 void TetrisBoard::render_board()

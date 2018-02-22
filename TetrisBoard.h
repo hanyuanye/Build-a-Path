@@ -2,7 +2,14 @@
 //It updates based on a move and renders accordingly. 
 //A lot of helper functions were necessary. 
 //
-//It also currently has a sort of magic number system that will be replaced.
+//It also currently has a magic number system that will be replaced with enums
+//In the meantime, the numbers are defined:
+//-1: The sides of the board. Purple
+// 0: Empty. Black
+// 1: Locked in minos. Blue
+// 2: Controllable mino. Red
+
+
 
 
 #pragma once
@@ -14,7 +21,7 @@
 #include "Constant.h"
 
 enum Mode { build, travel, transistion };
-enum TetrisMove { none, rLeft, rRight, mLeft, mRight, mDown, autoDown };
+enum TetrisMove { none, rLeft, rRight, mLeft, mRight, mDown, autoDown, drop, clear };
 
 extern int xInitial;
 extern int yInitial;
@@ -54,6 +61,7 @@ private:
 	void place_mino();
 	void set_mino();
 	void replace_mino();
+	void drop_mino();
 	
 	Mino * mino;
 };

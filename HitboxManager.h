@@ -22,7 +22,7 @@ public:
 	void generateAABB(const std::vector<std::vector<int>>& board); //TODO: Currently generates a seperate AABB for each block. This is bad and will be optimized. 
 	void addWall(Vec2d _min, Vec2d _max);
 //	void addSpike(Vec2d _min, Vec2d _max);
-	void checkCollisions(std::unique_ptr<Player>& player); //Iterates through the obstacle_list, checks collision and lets objects handle it if there are. 
+	void checkCollisions(std::shared_ptr<Player>& player); //Iterates through the obstacle_list, checks collision and lets objects handle it if there are. 
 	bool checkAABB(std::unique_ptr<AABB>& A, std::unique_ptr<AABB>& B); //Helper function for checkCollision.
 
 private:

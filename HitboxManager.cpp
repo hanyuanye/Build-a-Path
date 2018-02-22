@@ -24,12 +24,14 @@ void HitboxManager::generateAABB(const std::vector<std::vector<int>>& board)
 		for (unsigned j = 0; j < board[0].size(); j++) {
 			switch (board[i][j]) {
 			case -1:
-				addWall(Vec2d(xInitial + i * (tileSize + 2 * lineSize), yInitial + j * (tileSize + 2 * lineSize)), 
-						Vec2d(xInitial + (i+1) * (tileSize + 2 * lineSize), yInitial + (j+1) * (tileSize + 2 * lineSize)));
+				addWall(Vec2d(xInitial + (i) * (tileSize + lineSize*0), yInitial + (j) * (tileSize + lineSize*0)), 
+						Vec2d(xInitial + (i + 1) * (tileSize + lineSize*0), yInitial + (j + 1) * (tileSize + lineSize*0)));
+				break;
+			case 0:
 				break;
 			case 1:
-				addWall(Vec2d(xInitial + i * (tileSize + 2 * lineSize), yInitial + j * (tileSize + 2 * lineSize)),
-						Vec2d(xInitial + (i + 1) * (tileSize + 2 * lineSize), yInitial + (j + 1) * (tileSize + 2 * lineSize)));
+				addWall(Vec2d(xInitial + i * (tileSize + 2 * lineSize*0), yInitial + j * (tileSize + 2 * lineSize*0)),
+						Vec2d(xInitial + (i + 1) * (tileSize + 2 * lineSize*0), yInitial + (j + 1) * (tileSize + 2 * lineSize*0)));
 				break;
 /*			case 3:
 				addSpike(Vec2d(xInitial + i * (tileSize + 2 * lineSize), yInitial + j * (tileSize + 2 * lineSize)),
@@ -40,7 +42,6 @@ void HitboxManager::generateAABB(const std::vector<std::vector<int>>& board)
 			}
 		}
 	}
-
 }
 
 void HitboxManager::addWall(Vec2d _min, Vec2d _max)
@@ -48,9 +49,8 @@ void HitboxManager::addWall(Vec2d _min, Vec2d _max)
 	obstacle_list.push_back(std::make_shared<Wall>(_min, _max));
 }
 
-void HitboxManager::checkCollisions(std::unique_ptr<Player>& player)
+void HitboxManager::checkCollisions(std::shared_ptr<Player>& player)
 {
-	auto j = obstacle_list[0];
 	for (auto& i : obstacle_list) {
 		if (checkAABB(i->obstacle_hitbox, player->hitbox)) {
 			player->resolveCollision(i);
@@ -64,6 +64,8 @@ bool HitboxManager::checkAABB(std::unique_ptr<AABB>& A, std::unique_ptr<AABB>& B
 		A->min.get_x() < B->max.get_x() &&
 		A->max.get_y() > B->min.get_y() &&
 		A->min.get_y() < B->max.get_y()) {
+//		cout << A->min.get_y() << "  " << A->max.get_y() << endl;
+//5		cout << B->min.get_y() << "  " << B->max.get_y() << endl;
 		return true;
 	}
 	return false;

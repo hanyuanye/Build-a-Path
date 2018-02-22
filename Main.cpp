@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 
 	Scene * scene = new Scene();
 
-	if (scene->init("Simple Platformer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, NULL, NULL, true)) {
+	if (scene->init("Simple Platformer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1500, 1000, false)) {
 
 		while (scene->running) {
 			frameStart = SDL_GetTicks();

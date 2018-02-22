@@ -11,7 +11,7 @@
 #include "Vec2d.h"
 #include "TextureManager.h"
 
-extern int GRAVITY;
+extern float GRAVITY;
 
 enum state { stand, walk, jump };
 
@@ -29,7 +29,7 @@ struct Data {
 class Player
 {
 public:
-	Player(Vec2d _min, Vec2d _max, int width, int height, SDL_Renderer * _ren);
+	Player(Vec2d _min, Vec2d _max, Vec2d pos, int width, int height, SDL_Renderer * _ren);
 	Player();
 	~Player();
 	std::unique_ptr<AABB> hitbox;
@@ -40,6 +40,8 @@ public:
 	void resolveCollision(std::shared_ptr<Obstacle>& obstacle);
 private:
 	std::unique_ptr<TextureManager> tex;
+	void checkX(std::shared_ptr<Obstacle>& obstacle);
+	void checkY(std::shared_ptr<Obstacle>& obstacle);
 	
 };
 
