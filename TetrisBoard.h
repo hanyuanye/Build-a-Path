@@ -8,6 +8,7 @@
 // 0: Empty. Black
 // 1: Locked in minos. Blue
 // 2: Controllable mino. Red
+// 3: Goal block. Green
 
 
 
@@ -18,6 +19,7 @@
 #include <stdlib.h>
 #include <ctime>
 #include "Mino.h"
+#include "Vec2d.h"
 #include "Constant.h"
 
 enum Mode { build, travel, transistion };
@@ -43,7 +45,7 @@ class TetrisBoard
 {
 public:
 	TetrisBoard();
-	TetrisBoard(int height, int width, SDL_Renderer * _ren);
+	TetrisBoard(int height, int width, SDL_Renderer * _ren, std::vector<Vec2d> goal_list);
 	~TetrisBoard();
 
 	void update(TetrisMove move);

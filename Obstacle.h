@@ -3,7 +3,7 @@
 #include "Vec2d.h"
 
 
-enum obstacle_type { wall };
+enum obstacle_type { wall, goal };
 struct AABB {
 	Vec2d min;
 	Vec2d max;
@@ -28,4 +28,10 @@ public:
 	Wall(Vec2d _min, Vec2d _max);
 private:
 
+};
+
+class Goal : public Obstacle
+{
+public:
+	Goal(Vec2d _min, Vec2d _max);
 };

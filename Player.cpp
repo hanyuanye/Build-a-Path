@@ -4,7 +4,7 @@
 
 Player::Player(Vec2d _min, Vec2d _max, Vec2d pos, int width, int height, SDL_Renderer * _ren)
 {
-	mData = std::make_unique<Data>(pos, Vec2d(1, 0), jump);
+	mData = std::make_unique<Data>(pos, Vec2d(), jump);
 	hitbox = std::make_unique<AABB>(pos, pos + Vec2d(width, height));
 	tex = std::make_unique<TextureManager>(_ren, "Assets/player.png", 255, 255, 255, width, height);
 }
@@ -26,9 +26,7 @@ void Player::render()
 void Player::update()
 {
 	mData->mPosition += mData->mVelocity;
-	if (mData->mState == jump) {
-		mData->mVelocity += mData->mAcceleration;
-	}
+	mData->mVelocity += mData->mAcceleration;
 	Vec2d diff = hitbox->max - hitbox->min;
 	hitbox->min = mData->mPosition;
 	hitbox->max = hitbox->min + diff;
@@ -39,21 +37,33 @@ void Player::resolveCollision(std::shared_ptr<Obstacle>& obstacle)
 	switch (obstacle->type) {
 
 	case wall:
-		int collision_x, collision_y;
-		if (hitbox->max.get_x() > obstacle->obstacle_hitbox->max.get_x()) {
-			collision_x = hitbox->min.get_x();
+		//This entire case is kinda hacky
+		//Essentially it determines what way to resovle the collision based on what has the least penetration
+		//The one with the least penetration is the one which likely started the collision
+		//E.g. if falling to the ground, there is always X penetration but never Y penetration
+		//This doesnt work for some edge cases but since the board is so small and the ticks so high
+		//those cases probably won't happen and definitely shouldn't happen consistently at all
+		float penetration_y, penetration_x;
+		if (hitbox->min.get_x() > obstacle->obstacle_hitbox->min.get_x()) {
+			penetration_y = fabs(hitbox->max.get_x() - obstacle->obstacle_hitbox->min.get_x());
 		}
 		else {
-			collision_x = hitbox->max.get_x();
+			penetration_y = fabs(hitbox->min.get_x() - obstacle->obstacle_hitbox->max.get_x());
 		}
 
-		if (hitbox->max.get_y() > obstacle->obstacle_hitbox->max.get_y()) {
-			collision_y = hitbox->min.get_y();
+		if (hitbox->min.get_y() > obstacle->obstacle_hitbox->min.get_y()) {
+			penetration_x = fabs(hitbox->max.get_y() - obstacle->obstacle_hitbox->min.get_y());
 		}
 		else {
-			collision_y = hitbox->max.get_y();
+			penetration_x = fabs(hitbox->min.get_y() - obstacle->obstacle_hitbox->max.get_y());
 		}
 
+		if (penetration_y < penetration_x) {
+			checkY(obstacle);
+		}
+		else {
+			checkX(obstacle);
+		}
 		break;
 	default:
 		break;
@@ -74,10 +84,10 @@ void Player::checkX(std::shared_ptr<Obstacle>& obstacle)
 
 void Player::checkY(std::shared_ptr<Obstacle>& obstacle)
 {
-	if (obstacle->obstacle_hitbox->min.get_y() < hitbox->max.get_y()) {
+	if (obstacle->obstacle_hitbox->min.get_y() > hitbox->min.get_y()) {
 		mData->mState = stand;
 	} 
-	if (mData->mVelocity.get_y() > 0) {
+	if (mData->mVelocity.get_y() >= 0) {
 		int height = hitbox->max.get_y() - hitbox->min.get_y();
 		mData->mPosition.set_y(obstacle->obstacle_hitbox->min.get_y() - height);
 	}

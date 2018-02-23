@@ -7,18 +7,18 @@ int yInitial = 0;
 int tileSize = 30;
 int lineSize = 1;
 
-int ticks_down_move = 30;
-int ticks_move = 4;
-int ticks_rotate= 10;
-int TICKS_TETRIS = 60 * 0;
+int ticks_down_move = 60;
+int ticks_move = 8;
+int ticks_rotate= 20;
+int TICKS_TETRIS = 120 * 3;
 
 int TETRIS_MINO_INITX = 3;
 int TETRIS_MINO_INITY = 0;
 
-int PLAYER_VELOCITY_X = 2;
-int PLAYER_VELOCITY_JUMP = -5;
+int PLAYER_VELOCITY_X = 1;
+int PLAYER_VELOCITY_JUMP = -2.5;
 
-float GRAVITY = 10.0 / 60.0;
+float GRAVITY = 10.0 / 120.0;
 
 int PLAYER_HEIGHT = 30;
 int PLAYER_WIDTH = 30;

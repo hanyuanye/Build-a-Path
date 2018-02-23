@@ -39,7 +39,9 @@ bool Scene::init(const char * title, int x, int y, int width, int height, bool f
 	ticks_last_down_move = 0;
 	ticks_last_move = 0;
 	ticks_last_rotate = 0;
-	Tetris = std::make_unique<TetrisBoard>(10, 30, renderer);
+	std::vector<Vec2d> v;
+//	v.push_back(Vec2d(10, 10));
+	Tetris = std::make_unique<TetrisBoard>(10, 30, renderer, v);
 	travel_mode = std::make_unique<Travel>(renderer);
 	travel_mode->createPlayer(5, 2, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_HITBOX_WIDTH, PLAYER_HITBOX_HEIGHT);
 	return true;

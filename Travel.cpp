@@ -23,7 +23,9 @@ void Travel::handleInput(PlayerMove pmove)
 //	cout << pmove << endl;
 	switch (pmove) {
 	case none_player:
-	//	player->mData->mVelocity.set_x(0);
+		if (player->mData->mState != jump) {
+			player->mData->mVelocity.set_x(0);
+		}
 		break;
 	case left_player:
 		player->mData->mVelocity.set_x(-PLAYER_VELOCITY_X);

@@ -6,7 +6,7 @@ TetrisBoard::TetrisBoard()
 {
 }
 
-TetrisBoard::TetrisBoard(int height, int width, SDL_Renderer * _ren)
+TetrisBoard::TetrisBoard(int height, int width, SDL_Renderer * _ren, std::vector<Vec2d> goal_list)
 {
 	srand(time(NULL));
 	ren = _ren;
@@ -23,6 +23,9 @@ TetrisBoard::TetrisBoard(int height, int width, SDL_Renderer * _ren)
 		board[board.size() - 1][j] = -1;
 	}
 	generate_mino();
+	for (int i = 0; i < goal_list.size(); i++) {
+		board[goal_list[i].get_x()][goal_list[i].get_y()] = 3;
+	}
 }
 
 
@@ -184,6 +187,9 @@ void TetrisBoard::render_board()
 				break;
 			case 2:
 				render_tile(color(204, 0, 0), i, j);
+				break;
+			case 3:
+				render_tile(color(0, 204, 0), i, j);
 				break;
 			}
 		}
