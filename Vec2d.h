@@ -28,5 +28,4 @@ public:
 	void set_y(const double &_y);
 	void set_vector(const double  &_x, const double  &_y);
 
-
 };

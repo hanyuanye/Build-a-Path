@@ -49,11 +49,20 @@ void HitboxManager::addWall(Vec2d _min, Vec2d _max)
 	obstacle_list.push_back(std::make_shared<Wall>(_min, _max));
 }
 
-void HitboxManager::checkCollisions(std::shared_ptr<Player>& player)
+void HitboxManager::checkCollisionsX(std::shared_ptr<Player>& player)
 {
 	for (auto& i : obstacle_list) {
 		if (checkAABB(i->obstacle_hitbox, player->hitbox)) {
-			player->resolveCollision(i);
+			player->resolveCollision(i, x);
+		}
+	}
+}
+
+void HitboxManager::checkCollisionsY(std::shared_ptr<Player>& player)
+{
+	for (auto& i : obstacle_list) {
+		if (checkAABB(i->obstacle_hitbox, player->hitbox)) {
+			player->resolveCollision(i, y);
 		}
 	}
 }
@@ -64,8 +73,6 @@ bool HitboxManager::checkAABB(std::unique_ptr<AABB>& A, std::unique_ptr<AABB>& B
 		A->min.get_x() < B->max.get_x() &&
 		A->max.get_y() > B->min.get_y() &&
 		A->min.get_y() < B->max.get_y()) {
-//		cout << A->min.get_y() << "  " << A->max.get_y() << endl;
-//5		cout << B->min.get_y() << "  " << B->max.get_y() << endl;
 		return true;
 	}
 	return false;

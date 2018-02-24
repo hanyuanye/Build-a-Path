@@ -14,6 +14,7 @@
 extern float GRAVITY;
 
 enum state { stand, walk, jump };
+enum axis { x, y };
 
 struct Data {
 	Vec2d mPosition;
@@ -36,8 +37,9 @@ public:
 	std::unique_ptr<Data> mData;
 
 	void render();
-	void update();
-	void resolveCollision(std::shared_ptr<Obstacle>& obstacle);
+	void updateX();
+	void updateY();
+	void resolveCollision(std::shared_ptr<Obstacle>& obstacle, axis _axis);
 private:
 	std::unique_ptr<TextureManager> tex;
 	void checkX(std::shared_ptr<Obstacle>& obstacle);

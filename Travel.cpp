@@ -54,9 +54,22 @@ void Travel::handleInput(PlayerMove pmove)
 	}
 }
 
-void Travel::update()
+void Travel::update(std::unique_ptr<HitboxManager>& hitbox_manager)
 {
-	player->update();
+	player->updateX();
+	hitbox_manager->checkCollisionsX(player);
+	player->updateY();
+	hitbox_manager->checkCollisionsY(player);
+}
+
+void Travel::updateX()
+{
+	player->updateX();
+}
+
+void Travel::updateY()
+{
+	player->updateY();
 }
 
 void Travel::render(std::unique_ptr<TetrisBoard>& Tetris)

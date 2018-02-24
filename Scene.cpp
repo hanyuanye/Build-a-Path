@@ -86,13 +86,10 @@ void Scene::update()
 		Tetris->update(clear);
 		mode = travel;
 		pmove = none_player;
-		travel_mode->handleInput(pmove);
-		travel_mode->update();
 		break;
 	case travel:
 		travel_mode->handleInput(pmove);
-		hitbox_manager->checkCollisions(travel_mode->player);
-		travel_mode->update();
+		travel_mode->update(hitbox_manager);
 		break;
 	default:
 		break;

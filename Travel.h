@@ -21,7 +21,9 @@ public:
 	~Travel();
 
 	void handleInput(PlayerMove pmove);
-	void update();
+	void update(std::unique_ptr<HitboxManager>& hitbox_manager);
+	void updateX();
+	void updateY();
 	void render(std::unique_ptr<TetrisBoard>& Tetris);
 	void createPlayer(const int& boardWidth, const int& boardHeight, const int& playerWidth, const int& playerHeight, const int& hitboxWidth, const int& hitboxHeight);
 	std::shared_ptr<Player> player;

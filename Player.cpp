@@ -23,46 +23,38 @@ void Player::render()
 	tex->render(mData->mPosition);
 }
 
-void Player::update()
+void Player::updateX()
 {
-	mData->mPosition += mData->mVelocity;
-	mData->mVelocity += mData->mAcceleration;
+	mData->mPosition.set_x(mData->mVelocity.get_x() + mData->mPosition.get_x());
+	mData->mVelocity.set_x(mData->mVelocity.get_x() + mData->mAcceleration.get_x());
 	Vec2d diff = hitbox->max - hitbox->min;
 	hitbox->min = mData->mPosition;
 	hitbox->max = hitbox->min + diff;
 }
 
-void Player::resolveCollision(std::shared_ptr<Obstacle>& obstacle)
+void Player::updateY()
+{
+	mData->mPosition.set_y(mData->mVelocity.get_y() + mData->mPosition.get_y());
+	mData->mVelocity.set_y(mData->mVelocity.get_y() + mData->mAcceleration.get_y());
+	Vec2d diff = hitbox->max - hitbox->min;
+	hitbox->min = mData->mPosition;
+	hitbox->max = hitbox->min + diff;
+}
+
+void Player::resolveCollision(std::shared_ptr<Obstacle>& obstacle, axis _axis)
 {
 	switch (obstacle->type) {
 
 	case wall:
-		//This entire case is kinda hacky
-		//Essentially it determines what way to resovle the collision based on what has the least penetration
-		//The one with the least penetration is the one which likely started the collision
-		//E.g. if falling to the ground, there is always X penetration but never Y penetration
-		//This doesnt work for some edge cases but since the board is so small and the ticks so high
-		//those cases probably won't happen and definitely shouldn't happen consistently at all
-		float penetration_y, penetration_x;
-		if (hitbox->min.get_x() > obstacle->obstacle_hitbox->min.get_x()) {
-			penetration_y = fabs(hitbox->max.get_x() - obstacle->obstacle_hitbox->min.get_x());
-		}
-		else {
-			penetration_y = fabs(hitbox->min.get_x() - obstacle->obstacle_hitbox->max.get_x());
-		}
-
-		if (hitbox->min.get_y() > obstacle->obstacle_hitbox->min.get_y()) {
-			penetration_x = fabs(hitbox->max.get_y() - obstacle->obstacle_hitbox->min.get_y());
-		}
-		else {
-			penetration_x = fabs(hitbox->min.get_y() - obstacle->obstacle_hitbox->max.get_y());
-		}
-
-		if (penetration_y < penetration_x) {
-			checkY(obstacle);
-		}
-		else {
+		switch (_axis) {
+		case x:
 			checkX(obstacle);
+			break;
+		case y:
+			checkY(obstacle);
+			break;
+		default:
+			break;
 		}
 		break;
 	default:
