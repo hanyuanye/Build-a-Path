@@ -24,14 +24,14 @@ void HitboxManager::generateAABB(const std::vector<std::vector<int>>& board)
 		for (unsigned j = 0; j < board[0].size(); j++) {
 			switch (board[i][j]) {
 			case -1:
-				addWall(Vec2d(xInitial + (i) * (tileSize + lineSize*0), yInitial + (j) * (tileSize + lineSize*0)), 
-						Vec2d(xInitial + (i + 1) * (tileSize + lineSize*0), yInitial + (j + 1) * (tileSize + lineSize*0)));
+				addWall(Vec2d(xInitial + i * tileSize, yInitial + j * tileSize), 
+						Vec2d(xInitial + (i + 1) * tileSize, yInitial + (j + 1) * tileSize));
 				break;
 			case 0:
 				break;
 			case 1:
-				addWall(Vec2d(xInitial + i * (tileSize + 2 * lineSize*0), yInitial + j * (tileSize + 2 * lineSize*0)),
-						Vec2d(xInitial + (i + 1) * (tileSize + 2 * lineSize*0), yInitial + (j + 1) * (tileSize + 2 * lineSize*0)));
+				addWall(Vec2d(xInitial + i * tileSize, yInitial + j * tileSize),
+						Vec2d(xInitial + (i + 1) * tileSize, yInitial + (j + 1) * tileSize));
 				break;
 /*			case 3:
 				addSpike(Vec2d(xInitial + i * (tileSize + 2 * lineSize), yInitial + j * (tileSize + 2 * lineSize)),
