@@ -5,6 +5,7 @@
 #include "TetrisBoard.h"
 
 enum PlayerMove { none_player, left_player, right_player, up_player };
+enum game_state { game_won, game_lost, game_ongoing };
 
 extern int PLAYER_VELOCITY_X;
 extern int PLAYER_VELOCITY_JUMP;
@@ -18,16 +19,16 @@ public:
 	Travel();
 	Travel(SDL_Renderer * _ren);
 	~Travel();
-
-	void handleInput(PlayerMove pmove);
-	void update(std::unique_ptr<HitboxManager>& hitbox_manager);
-	void updateX();
-	void updateY();
-	void render(std::unique_ptr<TetrisBoard>& Tetris);
 	void createPlayer(const int& boardWidth, const int& boardHeight, const int& playerWidth, const int& playerHeight, const int& hitboxWidth, const int& hitboxHeight);
-	std::shared_ptr<Player> player;
+	void handleInput(PlayerMove pmove);
+	game_state update(std::unique_ptr<HitboxManager>& hitbox_manager);
+	void render(std::unique_ptr<TetrisBoard>& Tetris);
+
 
 private: 
+	void updateX();
+	void updateY();
+	std::shared_ptr<Player> player;
 	SDL_Renderer * ren;
 };
 

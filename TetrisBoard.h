@@ -23,7 +23,7 @@
 #include "Constant.h"
 #include "Obstacle.h"
 
-enum Mode { build, travel, transistion };
+enum Mode { build, travel, transistion, result_screen_won, result_screen_lost };
 enum TetrisMove { none, rLeft, rRight, mLeft, mRight, mDown, autoDown, drop, clear };
 
 extern int xInitial;

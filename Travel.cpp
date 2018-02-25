@@ -54,12 +54,20 @@ void Travel::handleInput(PlayerMove pmove)
 	}
 }
 
-void Travel::update(std::unique_ptr<HitboxManager>& hitbox_manager)
+game_state Travel::update(std::unique_ptr<HitboxManager>& hitbox_manager)
 {
 	player->updateX();
 	hitbox_manager->checkCollisionsX(player);
 	player->updateY();
 	hitbox_manager->checkCollisionsY(player);
+
+	if (hitbox_manager->lives == 0) {
+		return game_lost;
+	}
+	if (hitbox_manager->num_goals == 0) {
+		return game_won;
+	}
+	return game_ongoing;
 }
 
 void Travel::updateX()

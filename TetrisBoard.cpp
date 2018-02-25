@@ -42,6 +42,8 @@ bool TetrisBoard::update(TetrisMove move)
 {
 	clear_mino();
 	switch (move) {
+	// 4 represents the number of possible mino orientations
+	// The numbers should rotate from 0 -> 3 so an orientation of 0 going down will become 3 not -1
 	case none:
 		break;
 	case rLeft:
@@ -50,7 +52,7 @@ bool TetrisBoard::update(TetrisMove move)
 			mino->mOrientation = 3;
 		}
 		if (!mino_valid()) {
-			mino->mOrientation = (mino->mOrientation + 1) % 4;
+			mino->mOrientation = (mino->mOrientation + 1) % 4; 
 		}
 		break;
 	case rRight:

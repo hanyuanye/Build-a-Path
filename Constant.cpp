@@ -10,7 +10,7 @@ int lineSize = 1;
 int ticks_down_move = 60;
 int ticks_move = 8;
 int ticks_rotate= 20;
-int TICKS_TETRIS = 120 * 60;
+int TICKS_TETRIS = 120 * 60; //120 is the number of ticks, change the right value to change the seconds
 
 int TETRIS_MINO_INITX = 1;
 int TETRIS_MINO_INITY = 0;
@@ -20,10 +20,12 @@ int PLAYER_VELOCITY_JUMP = -4.5;
 
 float GRAVITY = 10.0 / 120.0;
 
-int PLAYER_HEIGHT = 30;
-int PLAYER_WIDTH = 30;
-int PLAYER_HITBOX_HEIGHT = 25;
-int PLAYER_HITBOX_WIDTH = 20;
+int PLAYER_HEIGHT = 25;
+int PLAYER_WIDTH = 25;
+int PLAYER_HITBOX_HEIGHT = 20;
+int PLAYER_HITBOX_WIDTH = 15;
+
+int PLAYER_LIVES = 1;
 
 //mPieces assumes a 5x5 grid. The rotation piece for each mino will be in the centre position at (2, 2). 
 //Then, we can figure out where all the actual blocks are for each rotation by adding it's position relative

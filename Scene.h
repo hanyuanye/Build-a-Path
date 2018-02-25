@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include "TetrisBoard.h"
 #include "Travel.h"
 #include "Constant.h"
@@ -45,6 +46,8 @@ private:
 
 	void tetris_input(SDL_Event event);
 	void travel_input(SDL_Event event);
+	void renderResultScreenWon();
+	void renderResultScreenLost();
 
 	TetrisMove tmove;
 	PlayerMove pmove;

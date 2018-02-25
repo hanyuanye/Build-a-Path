@@ -24,6 +24,8 @@ HitboxManager::~HitboxManager()
 //The difference between these two Vec2ds are the dimensions
 void HitboxManager::generateAABB(const std::vector<std::vector<obstacle_type>>& board)
 {
+	num_goals = 0;
+	lives = PLAYER_LIVES;
 	for (unsigned i = 0; i < board.size(); i++) {
 		for (unsigned j = 0; j < board[0].size(); j++) {
 			switch (board[i][j]) {
@@ -60,6 +62,7 @@ void HitboxManager::addWall(Vec2d _min, Vec2d _max)
 void HitboxManager::addGoal(Vec2d _min, Vec2d _max)
 {
 	obstacle_list.push_back(std::make_shared<Goal>(_min, _max));
+	num_goals++;
 }
 
 void HitboxManager::addSpike(Vec2d _min, Vec2d _max)
@@ -69,25 +72,18 @@ void HitboxManager::addSpike(Vec2d _min, Vec2d _max)
 
 void HitboxManager::checkCollisionsX(std::shared_ptr<Player>& player)
 {
-	for (auto& i : obstacle_list) {
-		if (checkAABB(i->obstacle_hitbox, player->hitbox)) {
-			player->resolveCollision(i, x);
+	for (int i = 0; i < obstacle_list.size(); i++) {
+		if (checkAABB(obstacle_list[i]->obstacle_hitbox, player->hitbox)) {
+			updatePlayerStatus(player->resolveCollision(obstacle_list[i], x), i);
 		}
 	}
 }
 
 void HitboxManager::checkCollisionsY(std::shared_ptr<Player>& player)
 {
-	for (auto& i : obstacle_list) {
-		if (checkAABB(i->obstacle_hitbox, player->hitbox)) {
-			switch (player->resolveCollision(i, y)) {
-			case no_result:
-				break;
-			case win:
-				break;
-			case lose:
-				break;
-			}
+	for (int i = 0; i < obstacle_list.size(); i++) {
+		if (checkAABB(obstacle_list[i]->obstacle_hitbox, player->hitbox)) {
+			updatePlayerStatus(player->resolveCollision(obstacle_list[i], y), i);
 		}
 	}
 }
@@ -101,4 +97,22 @@ bool HitboxManager::checkAABB(std::unique_ptr<AABB>& A, std::unique_ptr<AABB>& B
 		return true;
 	}
 	return false;
+}
+
+void HitboxManager::updatePlayerStatus(collision_result result, int i)
+{
+	switch (result) {
+	case no_result:
+		break;
+	case win:
+		num_goals--;
+		obstacle_list.erase(obstacle_list.begin() + i);
+		break;
+	case lose:
+		lives--;
+		obstacle_list.erase(obstacle_list.begin() + i);
+		break;
+	default:
+		break;
+	}
 }

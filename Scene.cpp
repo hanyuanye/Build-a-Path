@@ -33,6 +33,7 @@ bool Scene::init(const char * title, int x, int y, int width, int height, bool f
 		return false;
 		running = false;
 	}
+	TTF_Init();
 
 	mode = build;
 	tmove = none;
@@ -40,9 +41,9 @@ bool Scene::init(const char * title, int x, int y, int width, int height, bool f
 	ticks_last_move = 0;
 	ticks_last_rotate = 0;
 	std::vector<Vec2d> goal;
-	goal.push_back(Vec2d(10, 10));
+	goal.push_back(Vec2d(10, 20));
 	std::vector<Vec2d> spike;
-	spike.push_back(Vec2d(10, 11));
+	spike.push_back(Vec2d(5, 11));
 	Tetris = std::make_unique<TetrisBoard>(20, 30, renderer, goal, spike);
 	travel_mode = std::make_unique<Travel>(renderer);
 	travel_mode->createPlayer(5, 2, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_HITBOX_WIDTH, PLAYER_HITBOX_HEIGHT);
@@ -94,7 +95,18 @@ void Scene::update()
 		break;
 	case travel:
 		travel_mode->handleInput(pmove);
-		travel_mode->update(hitbox_manager);
+		switch (travel_mode->update(hitbox_manager)) {
+		case game_ongoing:
+			break;
+		case game_won:
+			mode = result_screen_won;
+			break;
+		case game_lost:
+			mode = result_screen_lost;
+			break;
+		default:
+			break;
+		}
 		break;
 	default:
 		break;
@@ -113,6 +125,14 @@ void Scene::render()
 		break;
 	case travel:
 		travel_mode->render(Tetris);
+		break;
+	case result_screen_won:
+		travel_mode->render(Tetris);
+		renderResultScreenWon();
+		break;
+	case result_screen_lost:
+		travel_mode->render(Tetris);
+		renderResultScreenLost();
 		break;
 	default:
 		break;
@@ -201,5 +221,37 @@ void Scene::travel_input(SDL_Event event)
 	default:
 		break;
 	}
+}
+
+void Scene::renderResultScreenWon()
+{
+	std::string game_over_string = "Game Won!";
+	TTF_Font* game_over_font = TTF_OpenFont("arial.ttf", 35);
+	SDL_Color text_color = { 255, 255, 255 };
+	SDL_Surface* surface_font = TTF_RenderText_Solid(game_over_font, game_over_string.c_str(), text_color);
+	SDL_Texture* texture_font = SDL_CreateTextureFromSurface(renderer, surface_font);
+	SDL_Rect rect = { 75, 300, surface_font->w, surface_font->h };
+
+	SDL_RenderCopy(renderer, texture_font, NULL, &rect);
+	TTF_CloseFont(game_over_font);
+	SDL_FreeSurface(surface_font);
+	SDL_DestroyTexture(texture_font);
+	SDL_RenderPresent(renderer);
+}
+
+void Scene::renderResultScreenLost()
+{
+	std::string game_over_string = "Game Lost!";
+	TTF_Font* game_over_font = TTF_OpenFont("arial.ttf", 35);
+	SDL_Color text_color = { 255, 255, 255 };
+	SDL_Surface* surface_font = TTF_RenderText_Solid(game_over_font, game_over_string.c_str(), text_color);
+	SDL_Texture* texture_font = SDL_CreateTextureFromSurface(renderer, surface_font);
+	SDL_Rect rect = { 75, 300, surface_font->w, surface_font->h };
+
+	SDL_RenderCopy(renderer, texture_font, NULL, &rect);
+	TTF_CloseFont(game_over_font);
+	SDL_FreeSurface(surface_font);
+	SDL_DestroyTexture(texture_font);
+	SDL_RenderPresent(renderer);
 }
 
