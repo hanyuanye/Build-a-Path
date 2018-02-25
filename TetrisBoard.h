@@ -21,6 +21,7 @@
 #include "Mino.h"
 #include "Vec2d.h"
 #include "Constant.h"
+#include "Obstacle.h"
 
 enum Mode { build, travel, transistion };
 enum TetrisMove { none, rLeft, rRight, mLeft, mRight, mDown, autoDown, drop, clear };
@@ -45,15 +46,15 @@ class TetrisBoard
 {
 public:
 	TetrisBoard();
-	TetrisBoard(int height, int width, SDL_Renderer * _ren, std::vector<Vec2d> goal_list);
+	TetrisBoard(int height, int width, SDL_Renderer * _ren, std::vector<Vec2d> goal_list, std::vector<Vec2d> spike_list);
 	~TetrisBoard();
 
-	void update(TetrisMove move);
+	bool update(TetrisMove move);
 	void render();
-	std::vector<std::vector<int>> get_board();
+	std::vector<std::vector<obstacle_type>> get_board();
 	
 private:
-	std::vector<std::vector<int>> board;
+	std::vector<std::vector<obstacle_type>> board;
 	SDL_Renderer * ren;
 	void render_board();
 	void render_tile(color tile_color, int x, int y);

@@ -3,7 +3,6 @@
 #include <SDL_image.h>
 #include "HitboxManager.h"
 #include "TetrisBoard.h"
-#include "Player.h"
 
 enum PlayerMove { none_player, left_player, right_player, up_player };
 

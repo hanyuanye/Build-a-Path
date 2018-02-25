@@ -10,9 +10,9 @@ int lineSize = 1;
 int ticks_down_move = 60;
 int ticks_move = 8;
 int ticks_rotate= 20;
-int TICKS_TETRIS = 120 * 3;
+int TICKS_TETRIS = 120 * 60;
 
-int TETRIS_MINO_INITX = 3;
+int TETRIS_MINO_INITX = 1;
 int TETRIS_MINO_INITY = 0;
 
 int PLAYER_VELOCITY_X = 1;
@@ -22,7 +22,7 @@ float GRAVITY = 10.0 / 120.0;
 
 int PLAYER_HEIGHT = 30;
 int PLAYER_WIDTH = 30;
-int PLAYER_HITBOX_HEIGHT = 30;
+int PLAYER_HITBOX_HEIGHT = 25;
 int PLAYER_HITBOX_WIDTH = 20;
 
 //mPieces assumes a 5x5 grid. The rotation piece for each mino will be in the centre position at (2, 2). 

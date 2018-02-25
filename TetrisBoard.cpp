@@ -6,25 +6,29 @@ TetrisBoard::TetrisBoard()
 {
 }
 
-TetrisBoard::TetrisBoard(int height, int width, SDL_Renderer * _ren, std::vector<Vec2d> goal_list)
+TetrisBoard::TetrisBoard(int height, int width, SDL_Renderer * _ren, std::vector<Vec2d> goal_list, std::vector<Vec2d> spike_list)
 {
 	srand(time(NULL));
 	ren = _ren;
 	board.resize(height);
 	for (auto &i : board) {
-		i.resize(width, 0);
+		i.resize(width, empty);
 	}
 	for (unsigned i = 0; i < board.size(); i++) {
-		board[i][0]= -1;
-		board[i][board[0].size() - 1] = -1;
+		board[i][0]= wall;
+		board[i][board[0].size() - 1] = wall;
 	}
 	for (unsigned j = 0; j < board[0].size(); j++) {
-		board[0][j] = -1;
-		board[board.size() - 1][j] = -1;
+		board[0][j] = wall;
+		board[board.size() - 1][j] = wall;
 	}
 	generate_mino();
 	for (int i = 0; i < goal_list.size(); i++) {
-		board[goal_list[i].get_x()][goal_list[i].get_y()] = 3;
+		board[goal_list[i].get_x()][goal_list[i].get_y()] = goal;
+	}
+
+	for (int i = 0; i < spike_list.size(); i++) {
+		board[spike_list[i].get_x()][spike_list[i].get_y()] = spike;
 	}
 }
 
@@ -34,7 +38,7 @@ TetrisBoard::~TetrisBoard()
 	SDL_DestroyRenderer(ren);
 }
 
-void TetrisBoard::update(TetrisMove move)
+bool TetrisBoard::update(TetrisMove move)
 {
 	clear_mino();
 	switch (move) {
@@ -89,12 +93,16 @@ void TetrisBoard::update(TetrisMove move)
 	case clear:
 		clear_mino();
 		delete mino;
-		return;
+		return true;
 		break;
 	default:
 		break;
 	}
+	if (mino == NULL) {
+		return false;
+	}
 	place_mino();
+	return true;
 }
 
 void TetrisBoard::render()
@@ -102,17 +110,23 @@ void TetrisBoard::render()
 	render_board();
 }
 
-std::vector<std::vector<int>> TetrisBoard::get_board()
+std::vector<std::vector<obstacle_type>> TetrisBoard::get_board()
 {
 	return board;
 }
 
 void TetrisBoard::generate_mino()
 {
-	if (board[TETRIS_MINO_INITX + 2][TETRIS_MINO_INITY + 2] != 0) {
-		return;
+	for (unsigned i = 1; i < 5; i++) {
+		for (unsigned j = 1; j < 5; j++) {
+			if (board[TETRIS_MINO_INITX + i][TETRIS_MINO_INITY + j] != empty) {
+				mino = NULL;
+ 				return;
+			}
+		}
 	}
-	int piece = rand() % 7;
+
+	int piece = rand() % 7; //7 is equal to the number of minos
 	mino = new Mino(piece);
 }
 
@@ -120,7 +134,7 @@ bool TetrisBoard::mino_valid()
 {
 	std::vector<std::vector<int>> tiles = mino->get_tiles();
 	for (unsigned i = 0; i < tiles.size(); i++) {
-		if (board[tiles[i][0]][tiles[i][1]] != 0) {
+		if (board[tiles[i][0]][tiles[i][1]] != empty) {
 			return false;
 		}
 	}
@@ -132,8 +146,8 @@ void TetrisBoard::clear_mino()
 	for (unsigned i = 0; i < 5; i++) {
 		for (unsigned j = 0; j < 5; j++) {
 			if (i + mino->x < board.size() && j + mino->y < board[0].size()) {
-				if (board[i + mino->x][j + mino->y] == 2) {
-					board[i + mino->x][j + mino->y] = 0;
+				if (board[i + mino->x][j + mino->y] == moving_mino) {
+					board[i + mino->x][j + mino->y] = empty;
 				}
 			}
 		}
@@ -144,7 +158,7 @@ void TetrisBoard::place_mino()
 {
 	std::vector<std::vector<int>> tiles = mino->get_tiles();
 	for (unsigned i = 0; i < tiles.size(); i++) {
-		board[tiles[i][0]][tiles[i][1]] = 2;
+		board[tiles[i][0]][tiles[i][1]] = moving_mino;
 	}
 }
 
@@ -152,7 +166,7 @@ void TetrisBoard::set_mino()
 {
 	std::vector<std::vector<int>> tiles = mino->get_tiles();
 	for (unsigned i = 0; i < tiles.size(); i++) {
-		board[tiles[i][0]][tiles[i][1]] = 1;
+		board[tiles[i][0]][tiles[i][1]] = locked_mino;
 	}
 }
 
@@ -176,20 +190,23 @@ void TetrisBoard::render_board()
 	for (unsigned i = 0; i < board.size(); i++) {
 		for (unsigned j = 0; j < board[0].size(); j++) {
 			switch (board[i][j]) {
-			case -1:
-				render_tile(color(128, 0 ,128), i, j);
+			case wall:
+				render_tile(color(128, 0 ,128), i, j); //purple
 				break;
-			case 0:
-				render_tile(color(0, 0, 0), i, j);
+			case empty:
+				render_tile(color(0, 0, 0), i, j); //black
 				break;
-			case 1:
-				render_tile(color(0, 0, 204), i, j);
+			case locked_mino:
+				render_tile(color(0, 0, 204), i, j); //blue
 				break;
-			case 2:
-				render_tile(color(204, 0, 0), i, j);
+			case moving_mino:
+				render_tile(color(204, 0, 0), i, j); //red
 				break;
-			case 3:
-				render_tile(color(0, 204, 0), i, j);
+			case goal:
+				render_tile(color(0, 204, 0), i, j); //green
+				break;
+			case spike:
+				render_tile(color(47, 79, 79), i, j); //dark grey
 				break;
 			}
 		}

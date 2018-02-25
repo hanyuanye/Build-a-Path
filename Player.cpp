@@ -41,7 +41,7 @@ void Player::updateY()
 	hitbox->max = hitbox->min + diff;
 }
 
-void Player::resolveCollision(std::shared_ptr<Obstacle>& obstacle, axis _axis)
+collision_result Player::resolveCollision(std::shared_ptr<Obstacle>& obstacle, axis _axis)
 {
 	switch (obstacle->type) {
 
@@ -57,9 +57,16 @@ void Player::resolveCollision(std::shared_ptr<Obstacle>& obstacle, axis _axis)
 			break;
 		}
 		break;
+	case goal:
+		return win;
+		break;
+	case spike:
+		return lose;
+		break;
 	default:
 		break;
 	}
+	return no_result;
 }
 
 void Player::checkX(std::shared_ptr<Obstacle>& obstacle)

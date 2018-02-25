@@ -39,9 +39,11 @@ bool Scene::init(const char * title, int x, int y, int width, int height, bool f
 	ticks_last_down_move = 0;
 	ticks_last_move = 0;
 	ticks_last_rotate = 0;
-	std::vector<Vec2d> v;
-//	v.push_back(Vec2d(10, 10));
-	Tetris = std::make_unique<TetrisBoard>(10, 30, renderer, v);
+	std::vector<Vec2d> goal;
+	goal.push_back(Vec2d(10, 10));
+	std::vector<Vec2d> spike;
+	spike.push_back(Vec2d(10, 11));
+	Tetris = std::make_unique<TetrisBoard>(20, 30, renderer, goal, spike);
 	travel_mode = std::make_unique<Travel>(renderer);
 	travel_mode->createPlayer(5, 2, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_HITBOX_WIDTH, PLAYER_HITBOX_HEIGHT);
 	return true;
@@ -71,19 +73,22 @@ void Scene::update()
 {
 	switch (mode) {
 	case build:
+		bool updated;
 		if ((tmove == rRight || tmove == rLeft || tmove == drop) && ticks_last_rotate >= ticks_rotate) {
 			ticks_last_rotate = 0;
-			Tetris->update(tmove);
+			updated = Tetris->update(tmove);
 		}
 		if ((tmove == mLeft || tmove == mRight || tmove == mDown) && ticks_last_move >= ticks_move) {
 			ticks_last_move = 0;
-			Tetris->update(tmove);
+			updated = Tetris->update(tmove);
 		}
 		update_ticks();
+		if (!updated) {
+			mode = transistion;
+		}
 		break;
 	case transistion:
 		hitbox_manager = std::make_unique<HitboxManager>(Tetris->get_board());
-		Tetris->update(clear);
 		mode = travel;
 		pmove = none_player;
 		break;
@@ -133,6 +138,7 @@ void Scene::update_ticks()
 	}
 	if (ticks_tetris >= TICKS_TETRIS) {
 		mode = transistion;
+		Tetris->update(clear);
 	}
 }
 

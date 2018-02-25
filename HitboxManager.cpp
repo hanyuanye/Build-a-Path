@@ -2,7 +2,7 @@
 
 
 
-HitboxManager::HitboxManager(const std::vector<std::vector<int>>& board)
+HitboxManager::HitboxManager(const std::vector<std::vector<obstacle_type>>& board)
 {
 	generateAABB(board);
 }
@@ -18,25 +18,33 @@ HitboxManager::~HitboxManager()
 
 }
 
-void HitboxManager::generateAABB(const std::vector<std::vector<int>>& board)
+//Generates AABB by creating a min Vec2d in top the top left corner of the box
+//and a max Vec2d in the bottom right corner of the box
+//The min Vec2d has a smaller y and x than max Vec2d
+//The difference between these two Vec2ds are the dimensions
+void HitboxManager::generateAABB(const std::vector<std::vector<obstacle_type>>& board)
 {
 	for (unsigned i = 0; i < board.size(); i++) {
 		for (unsigned j = 0; j < board[0].size(); j++) {
 			switch (board[i][j]) {
-			case -1:
+			case wall:
 				addWall(Vec2d(xInitial + i * tileSize, yInitial + j * tileSize), 
 						Vec2d(xInitial + (i + 1) * tileSize, yInitial + (j + 1) * tileSize));
 				break;
-			case 0:
+			case empty:
 				break;
-			case 1:
+			case locked_mino:
 				addWall(Vec2d(xInitial + i * tileSize, yInitial + j * tileSize),
 						Vec2d(xInitial + (i + 1) * tileSize, yInitial + (j + 1) * tileSize));
 				break;
-/*			case 3:
-				addSpike(Vec2d(xInitial + i * (tileSize + 2 * lineSize), yInitial + j * (tileSize + 2 * lineSize)),
-						 Vec2d(xInitial + (i + 1) * (tileSize + 2 * lineSize), yInitial + (j + 1) * (tileSize + 2 * lineSize)));
-				break;*/
+			case goal:
+				addGoal(Vec2d(xInitial + i * tileSize, yInitial + j * tileSize),
+						Vec2d(xInitial + (i + 1) * tileSize, yInitial + (j + 1) * tileSize));
+				break;
+			case spike:
+				addSpike(Vec2d(xInitial + i * tileSize, yInitial + j * tileSize),
+						 Vec2d(xInitial + (i + 1) * tileSize, yInitial + (j + 1) * tileSize));
+				break;
 			default:
 				break;
 			}
@@ -47,6 +55,16 @@ void HitboxManager::generateAABB(const std::vector<std::vector<int>>& board)
 void HitboxManager::addWall(Vec2d _min, Vec2d _max)
 {
 	obstacle_list.push_back(std::make_shared<Wall>(_min, _max));
+}
+
+void HitboxManager::addGoal(Vec2d _min, Vec2d _max)
+{
+	obstacle_list.push_back(std::make_shared<Goal>(_min, _max));
+}
+
+void HitboxManager::addSpike(Vec2d _min, Vec2d _max)
+{
+	obstacle_list.push_back(std::make_shared<Spike>(_min, _max));
 }
 
 void HitboxManager::checkCollisionsX(std::shared_ptr<Player>& player)
@@ -62,7 +80,14 @@ void HitboxManager::checkCollisionsY(std::shared_ptr<Player>& player)
 {
 	for (auto& i : obstacle_list) {
 		if (checkAABB(i->obstacle_hitbox, player->hitbox)) {
-			player->resolveCollision(i, y);
+			switch (player->resolveCollision(i, y)) {
+			case no_result:
+				break;
+			case win:
+				break;
+			case lose:
+				break;
+			}
 		}
 	}
 }

@@ -14,6 +14,7 @@
 extern float GRAVITY;
 
 enum state { stand, walk, jump };
+enum collision_result { win, lose, no_result };
 enum axis { x, y };
 
 struct Data {
@@ -39,7 +40,7 @@ public:
 	void render();
 	void updateX();
 	void updateY();
-	void resolveCollision(std::shared_ptr<Obstacle>& obstacle, axis _axis);
+	collision_result resolveCollision(std::shared_ptr<Obstacle>& obstacle, axis _axis);
 private:
 	std::unique_ptr<TextureManager> tex;
 	void checkX(std::shared_ptr<Obstacle>& obstacle);
