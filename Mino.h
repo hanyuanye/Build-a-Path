@@ -2,7 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include "Constant.h"
-extern int mPieces[7][4][4][2];
+extern int MINO_SHAPES[7][4][4][2];
 extern int TETRIS_MINO_INITX;
 extern int TETRIS_MINO_INITY;
 
